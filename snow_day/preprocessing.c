@@ -93,7 +93,7 @@ char** tokenize_sentence(char* process_txt, int* num_token) //문자 토큰화 == 문�
     return answer;
 }
 
-char** load_stopwords(const char* filename, int* num_stopwords)
+char** load_stopwords(const char* filename, int* num_stopwords)//불용어 가져오기
 {
     FILE* fp;
     *num_stopwords = 0;
