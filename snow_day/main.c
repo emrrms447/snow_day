@@ -14,6 +14,7 @@
 #include <stdlib.h> 
 #include <string.h> 
 #include "preprocessing.h"
+#include "brain.h"
 
 /*int main()
 {

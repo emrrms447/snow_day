@@ -16,7 +16,6 @@
 
 char* preprocess_text(const char* input_text) //영어를 소문자로 바꾸고 특수문자는 제거
 {
-    
     char* p = input_text;
     char* process_txt = (char*)malloc(sizeof(char) * (strlen(input_text)+1));
     if (process_txt == NULL) 
