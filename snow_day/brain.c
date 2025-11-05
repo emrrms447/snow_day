@@ -23,22 +23,22 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 	*num_intents = 0;
 	char line[256];
 	Intent* answer;
-	fp=fopen(filename, "r");
-	if (fp == NULL)
+	fp = fopen(filename, "r");
+	if (fp == NULL)//½ÇÆÐ Ã³¸® ·ÎÁ÷
 	{
 		return NULL;
 	}
-	
+
 	while (fgets(line, sizeof(line), fp) != NULL)
 	{
 		unsigned int len = strlen(line);
-		if (len > 0 && line[len - 1] == '\n') 
+		if (len > 0 && line[len - 1] == '\n')
 		{
 			line[len - 1] = '\0';
 		}
-		if (strlen(line) > 0) 
-		{ 
-			(*num_intents)++; 
+		if (strlen(line) > 0)
+		{
+			(*num_intents)++;
 		}
 	}
 	fseek(fp, 0, SEEK_SET);
@@ -54,6 +54,11 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 	{
 		char buf[256];
 		fgets(buf, 256, fp);
+		if (strlen(buf) > 0 && buf[strlen(buf) - 1] == '\n')//°³Çà¹®ÀÚ Ã³¸® ·ÎÁ÷
+		{
+			buf[strlen(buf) - 1] != '\0';
+		}
+
 		char* copy_txt = _strdup(buf);
 		if (copy_txt == NULL)
 		{
@@ -67,31 +72,42 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 		answer[i].name = _strdup(name);
 		if (answer[i].name == NULL)
 		{
+			free(copy_txt);
 			free_intent_rules(answer, i);
 			fclose(fp);
 			return NULL;
 		}
 
 		answer[i].keywords = (char**)malloc(sizeof(char*) * 256);
+		if (answer[i].keywords == NULL)
+		{
+			free(copy_txt);
+			free_intent_rules(answer, i);
+			fclose(fp);
+			return NULL;
+		}
 		name = strtok(NULL, ",");
 		while (name != NULL)
 		{
 			answer[i].keywords[answer[i].num_keywords] = _strdup(name);
-			if (answer[i].keywords[answer[i].num_keywords++] == NULL)
+			if (answer[i].keywords[answer[i].num_keywords] == NULL)
 			{
+				free(copy_txt);
 				free_intent_rules(answer, i);
 				fclose(fp);
 				return NULL;
 			}
+			answer[i].num_keywords++;
 			name = strtok(NULL, ",");
 		}
 
-		char** temp_keywords =realloc(answer[i].keywords, sizeof(char) * answer[i].num_keywords);
-		if(temp_keywords == NULL);
+		char** temp_keywords = (char**)realloc(answer[i].keywords, sizeof(char*) * answer[i].num_keywords);
+		if (temp_keywords == NULL);
 		else
 		{
 			answer[i].keywords = temp_keywords;
 		}
+		free(copy_txt);
 	}
 
 	fclose(fp);
@@ -119,4 +135,58 @@ void free_intent_rules(Intent* intents, int num_intents)
 		}
 	}
 	free(intents);
+	intents = NULL;
+}
+
+// ÇÊÅÍ¸µµÈ ÅäÅ«µéÀ» ±â¹ÝÀ¸·Î »ç¿ëÀÚ ÀÇµµ¸¦ ÆÄ¾ÇÇÏ´Â ÇÔ¼ö
+// ¹ÝÈ¯: ÆÄ¾ÇµÈ ÀÇµµ ÀÌ¸§ ¹®ÀÚ¿­ÀÇ Æ÷ÀÎÅÍ (µ¿Àû ÇÒ´çµÊ, »ç¿ë ÈÄ free ÇÊ¿ä)
+//       ÀÇµµ¸¦ ÆÄ¾ÇÇÏÁö ¸øÇÏ¸é NULL ¹ÝÈ¯.
+char* identify_intent(char** filtered_tokens, int num_filtered_tokens, Intent* intents, int num_intents)
+{
+	Intent* best_intent;
+	int num;
+	char* answer;
+	int* count = (int*)malloc(sizeof(int) * num_intents);
+	if (count == NULL)
+	{
+		return NULL;
+	}
+
+	for (int i = 0; i < num_intents; i++)
+	{
+		count[i] = 0;
+	}
+
+	for (int i = 0; i < num_intents; i++)
+	{
+		for (int j = 0; j < intents[i].num_keywords; j++)
+		{
+			for (int k = 0; k < num_filtered_tokens; k++)
+			{
+				if (strcmp(filtered_tokens[k], intents[i].keywords[j]) == 0)
+				{
+					count[i]++;
+				}
+			}
+		}
+	}
+	
+	num = 0;
+	for (int i = 0; i < num_intents; i++)
+	{
+		if (count[num] < count[i])
+		{
+			best_intent = (intents + i);
+			num = i;
+		}
+	}
+
+	if (count[num] == 0)
+	{
+		return NULL;
+	}
+
+	answer = _strdup(best_intent->name);
+	free(count);
+	return answer;
 }

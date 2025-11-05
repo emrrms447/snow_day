@@ -151,7 +151,7 @@ char** load_stopwords(const char* filename, int* num_stopwords)//불용어 가져오기
     return answer;
 }
 
-char** remove_stopwords(char** tokens, int num_tokens, char** stopwords, int num_stopwords, int* num_filtered_tokens)
+char** remove_stopwords(char** tokens, int num_tokens, char** stopwords, int num_stopwords, int* num_filtered_tokens)//불용어 제거
 {
     *num_filtered_tokens = 0;
     char** answer = (char**)malloc(sizeof(char*) * num_tokens);
