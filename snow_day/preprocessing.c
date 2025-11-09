@@ -136,6 +136,7 @@ char** load_stopwords(const char* filename, int* num_stopwords)//불용어 가져오기
             buf[len - 1] = '\0';
         }
         *(answer + i) = _strdup(buf);
+
         if (*(answer + i) == NULL)
         {
             for (int j = 0; j < i + 1; j++)
@@ -198,4 +199,32 @@ char** remove_stopwords(char** tokens, int num_tokens, char** stopwords, int num
     }
 
     return answer;
+}
+
+void free_char_ptr(char* preprocessed_text)
+{
+    free(preprocessed_text);
+    preprocessed_text = NULL;
+}
+
+void free_tokens_array(char** tokens, int num_tokens)
+{
+    for (int i = 0; i < num_tokens; i++)
+    {
+        free(*(tokens + i));
+        *(tokens + i) = NULL;
+    }
+    free(tokens);
+    tokens = NULL;
+}
+
+void free_stopwords_array(char** stopwords, int num_stopwords)
+{
+    for (int i = 0; i < num_stopwords; i++)
+    {
+        free(*(stopwords + i));
+        *(stopwords + i) = NULL;
+    }
+    free(stopwords);
+    stopwords = NULL;
 }

@@ -6,4 +6,8 @@ char** tokenize_sentence(char* process_txt, int* num_token);
 char** load_stopwords(const char* filename, int* num_stopwords);
 char** remove_stopwords(char** tokens, int num_tokens, char** stopwords, int num_stopwords, int* num_filtered_tokens);
 
+void free_char_ptr(char* preprocessed_text);
+void free_tokens_array(char** tokens, int num_tokens);
+void free_stopwords_array(char** stopwords, int num_stopwords);
+
 #endif
