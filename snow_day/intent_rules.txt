@@ -1,5 +1,5 @@
-날씨:날씨,기온,온도,오늘,내일,어때,궁금해
-인사:안녕,안녕하세요,반가워,반가워요,하이,헬로우,만나서,다시
-시간:시간,몇시,언제,몇분,몇초
-유머:농담,개그,재미,웃긴거,하나해줘,개그해줘
-종료:종료,그만,꺼져,그만해,멈춰,그만하자
+weather:weather,forecast,temperature,today,tomorrow,how,cold,hot
+greeting:hello,hi,howareyou,morning,evening,good
+time:time,whattime,when,oclock,now
+joke:joke,funny,tellme,hahaha
+exit:exit,quit,bye,stop,end
