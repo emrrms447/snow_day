@@ -43,7 +43,7 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 		}
 	}
 	fseek(fp, 0, SEEK_SET);
-	printf("num_intents = %d\n", *num_intents);
+	//printf("num_intents = %d\n", *num_intents);
 
 	answer = (Intent*)malloc(sizeof(Intent) * (*num_intents));
 	if (answer == NULL)
@@ -87,7 +87,6 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 			fclose(fp);
 			return NULL;
 		}
-		printf("name = %s\n", answer[i].name);
 
 		answer[i].keywords = (char**)malloc(sizeof(char*) * 256);
 		if (answer[i].keywords == NULL)
@@ -101,7 +100,6 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 		char* keyword_token = strtok(NULL, ",");
 		while (keyword_token != NULL)
 		{
-			printf("keyword_token = %s\n", keyword_token);
 			answer[i].keywords[answer[i].num_keywords] = _strdup(keyword_token);
 			if (answer[i].keywords[answer[i].num_keywords] == NULL)
 			{
@@ -203,16 +201,14 @@ char* identify_intent(char** filtered_tokens, int num_filtered_tokens, Intent* i
 		}
 	}
 
-	if (count[num] == 0)
+	if (count[num] == 0)//ÀÇµµ¸¦ Ã£Áö ¸øÇÑ °æ¿ì
 	{
-		printf("error2\n");
 		return NULL;
 	}
 
 	answer = _strdup(best_intent->name);
 	if (answer == NULL)
 	{
-		printf("error3\n");
 		return NULL;
 	}
 	free(count);

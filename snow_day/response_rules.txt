@@ -1,0 +1,5 @@
+greeting:"Hello there! How can I help you today?"0"Hi! What's up?"0"Good to see you! How may I assist you?"
+weather:"I can tell you about the weather. What city are you in?"0"The weather report is sunny and 25 degrees Celsius."0"It looks like rain today. Don't forget your umbrella!"
+time:"The current time is %H:%M."0"I'm a chatbot, I don't really have a concept of time, but it's now %H:%M."0"According to my clock, it's %H:%M."
+joke:"Why don't scientists trust atoms? Because they make up everything!"0"What do you call a fake noodle? An impasta!"0"I'm great at telling jokes, but bad at remembering them. Can I try one? Why did the scarecrow win an award? Because he was outstanding in his field!"
+exit:"Goodbye! Have a great day."0"See you next time!"0"Farewell! Thanks for chatting."0"Program terminating. Bye!"
