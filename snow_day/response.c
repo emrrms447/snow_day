@@ -113,16 +113,33 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 
 char* generate_response(const char* intent_name,ResponseRule* Rules,int num_response_rules)
 {
-	srand((unsigned int)(time(NULL)));
+	//srand((unsigned int)(time(NULL)));
 	ResponseRule* p = Rules;
-	int num;
-	
-	while (strcmp((p++)->intent_name, intent_name) != 0)
+	int num,count=0;
+
+	while (p<Rules+num_response_rules)
 	{
-		printf("Ã£´ÂÁß");
+		//printf("%s\n", (p)->intent_name);
+		if (strcmp((p)->intent_name, intent_name) == 0)
+		{
+			count = 1;
+			break;
+		}
+		p++;
+	}
+
+	if (count == 0)
+	{
+		return NULL;
+	}
+	printf("%s\n%d\n", p->intent_name,p->num_responses);
+	for (int i = 0; i < p->num_responses; i++)
+	{
+		printf("%s\n", p->responses[i]);
 	}
 
 	num = rand() % p->num_responses;
+	char* answer = _strdup(p->responses[num]);
 
-	return p->responses[0];
+	return p->responses[num];
 }
