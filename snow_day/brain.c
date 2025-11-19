@@ -97,7 +97,7 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 			return NULL;
 		}
 
-		char* keyword_token = strtok(NULL, ",");
+		char* keyword_token = strtok(NULL, ":");
 		while (keyword_token != NULL)
 		{
 			answer[i].keywords[answer[i].num_keywords] = _strdup(keyword_token);
@@ -109,7 +109,7 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 				return NULL;
 			}
 			answer[i].num_keywords++;
-			keyword_token = strtok(NULL, ",");
+			keyword_token = strtok(NULL, ":");
 		}
 
 		char** temp_keywords = (char**)realloc(answer[i].keywords, sizeof(char*) * answer[i].num_keywords);
@@ -123,30 +123,6 @@ Intent* load_intent_rules(const char* filename, int* num_intents) //±ÔÄ¢À» ÆÄÀÏ¿
 
 	fclose(fp);
 	return answer;
-}
-
-// Intent ±¸Á¶Ã¼ ¹è¿­°ú ±× ³»ºÎÀÇ ¸ðµç ÇÒ´çµÈ ¸Þ¸ð¸®¸¦ ÇØÁ¦ÇÏ´Â ÇïÆÛ ÇÔ¼ö
-void free_intent_rules(Intent* intents, int num_intents)
-{
-	Intent* p;
-	for (p = intents; p < intents + num_intents; p++)
-	{
-		if (p->name != NULL)
-		{
-			free(p->name);
-		}
-		
-		if (p->keywords != NULL)
-		{
-			for (int i = 0; i < p->num_keywords; i++)
-			{
-				free((p->keywords)[i]);
-			}
-			free(p->keywords);
-		}
-	}
-	free(intents);
-	intents = NULL;
 }
 
 // ÇÊÅÍ¸µµÈ ÅäÅ«µéÀ» ±â¹ÝÀ¸·Î »ç¿ëÀÚ ÀÇµµ¸¦ ÆÄ¾ÇÇÏ´Â ÇÔ¼ö
@@ -175,19 +151,19 @@ char* identify_intent(char** filtered_tokens, int num_filtered_tokens, Intent* i
 		{
 			for (int k = 0; k < num_filtered_tokens; k++)
 			{
-				printf("%s ", intents[i].keywords[j]);
+				//printf("%s ", intents[i].keywords[j]);
 				if (strcmp(filtered_tokens[k], intents[i].keywords[j]) == 0)
 				{
 					count[i]++;
 				}
 			}
-			printf("\n");
+			//printf("\n");
 		}
 	}
-	for (int i = 0; i < num_intents; i++)
-	{
-		printf("%d\n", count[i]);
-	}
+	//for (int i = 0; i < num_intents; i++)
+	//{
+	//	printf("%d\n", count[i]);
+	//}
 
 
 	num = 0;
@@ -213,4 +189,28 @@ char* identify_intent(char** filtered_tokens, int num_filtered_tokens, Intent* i
 	}
 	free(count);
 	return answer;
+}
+
+// Intent ±¸Á¶Ã¼ ¹è¿­°ú ±× ³»ºÎÀÇ ¸ðµç ÇÒ´çµÈ ¸Þ¸ð¸®¸¦ ÇØÁ¦ÇÏ´Â ÇïÆÛ ÇÔ¼ö
+void free_intent_rules(Intent* intents, int num_intents)
+{
+	Intent* p;
+	for (p = intents; p < intents + num_intents; p++)
+	{
+		if (p->name != NULL)
+		{
+			free(p->name);
+		}
+
+		if (p->keywords != NULL)
+		{
+			for (int i = 0; i < p->num_keywords; i++)
+			{
+				free((p->keywords)[i]);
+			}
+			free(p->keywords);
+		}
+	}
+	free(intents);
+	intents = NULL;
 }

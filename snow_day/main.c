@@ -1,3 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h> 
+#include <string.h> 
+#include "preprocessing.h"
+#include "brain.h"
+#include "response.h"
+
 /*
 
 //_____프로젝트_snow_day_____//
@@ -8,25 +16,6 @@
 수정정보:
 
 */
-
-#define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h> 
-#include <string.h> 
-#include "preprocessing.h"
-#include "brain.h"
-
-// (MSVC 사용자라면 제일 위에 추가)
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifdef _MSC_VER
-#pragma warning(disable: 4996)
-#endif
-
-#include "preprocessing.h" // 전처리 모듈 헤더 포함
-#include "brain.h"         // 뇌/응답 모듈 헤더 포함 (ResponseRule 포함)
-#include "response.h"
 
 // --- 메인 함수 (챗봇 통합 테스트 코드) ---
 int main() {
@@ -69,12 +58,12 @@ int main() {
 
     // 3. 응답 규칙 로드 (네가 구현할 부분)
     // Placeholder - 네가 load_response_rules 함수를 구현하고 나면 이 주석을 풀고 사용해.
-     response_rules = load_response_rules("response_rules.txt", &num_response_rules);
-     if (response_rules == NULL) {
-         fprintf(stderr, "Test Error: 응답 규칙 로드 실패! 'response_rules.txt' 파일을 확인하세요.\n");
-         goto cleanup;
-     }
-     printf("성공: 응답 규칙 %d개 로드 완료.\n", num_response_rules);
+    response_rules = load_response_rules("response_rules.txt", &num_response_rules);
+    if (response_rules == NULL) {
+        fprintf(stderr, "Test Error: 응답 규칙 로드 실패! 'response_rules.txt' 파일을 확인하세요.\n");
+        goto cleanup;
+    }
+    printf("성공: 응답 규칙 %d개 로드 완료.\n", num_response_rules);
 
 
     // --- 사용자 입력 루프 ---
@@ -109,7 +98,8 @@ int main() {
         if (tokens == NULL) {
             fprintf(stderr, "Warning: 토큰화 실패 또는 토큰 없음.\n");
             chatbot_response = _strdup("I couldn't understand the words you used.");
-            goto respond_and_cleanup_loop;
+            continue;
+            //goto respond_and_cleanup_loop;
         }
         // printf("[Debug] 토큰화된 단어 개수: %d, 목록: ", num_tokens);
         // for (int i = 0; i < num_tokens; i++) printf("'%s' ", tokens[i]); printf("\n");
@@ -119,7 +109,8 @@ int main() {
         if (filtered_tokens == NULL) {
             fprintf(stderr, "Warning: 불용어 제거 후 남은 단어가 없습니다.\n");
             chatbot_response = _strdup("Your input is too short or all common words.");
-            goto respond_and_cleanup_loop;
+            continue;
+            //goto respond_and_cleanup_loop;
         }
         // printf("[Debug] 필터링된 단어 개수: %d, 목록: ", num_filtered_tokens);
         // for (int i = 0; i < num_filtered_tokens; i++) printf("'%s' ", filtered_tokens[i]); printf("\n");
@@ -131,17 +122,40 @@ int main() {
             identified_intent_name = _strdup("unknown"); // 의도를 못 찾았을 때 "unknown" 의도로 간주하여 응답 생성.
             if (identified_intent_name == NULL) {
                 fprintf(stderr, "Error: 'unknown' 의도 메모리 할당 실패.\n");
+                continue;
+                //goto respond_and_cleanup_loop;
+            }
+        }
+        printf("[DEBUG] --- IDENTIFY_INTENT CALL START ---\n");
+        printf("[DEBUG] Filtered tokens (%d): ", num_filtered_tokens);
+        for (int i = 0; i < num_filtered_tokens; i++) {
+            printf("'%s' ", filtered_tokens[i]);
+        }
+        printf("\n");
+
+        identified_intent_name = identify_intent(filtered_tokens, num_filtered_tokens, intents, num_intents);
+
+        // [디버그 끝] identify_intent 반환 값 확인
+        if (identified_intent_name == NULL) {
+            printf("[DEBUG] Identified Intent: NULL (meaning no intent matched)\n");
+            identified_intent_name = _strdup("unknown"); // main에서 "unknown"으로 덮어씀
+            if (identified_intent_name == NULL) {
+                fprintf(stderr, "Error: 'unknown' intent memory allocation failed.\n");
                 goto respond_and_cleanup_loop;
             }
         }
-        // else { printf("[Debug] 파악된 의도: **%s**\n", identified_intent_name); }
+        else {
+            printf("[DEBUG] Identified Intent: **%s**\n", identified_intent_name);
+        }
+        printf("[DEBUG] --- IDENTIFY_INTENT CALL END ---\n");
+
 
         // 5. 응답 생성 (generate_response)
         // Placeholder - 네가 generate_response 함수를 구현하고 나면 이 주석을 풀고 사용해.
         // 이 부분은 identified_intent_name 과 response_rules, num_response_rules를 활용해야 함.
         // 만약 response_rules를 로드하지 않았다면 기본 응답을 하도록.
         if (response_rules != NULL) {
-            chatbot_response = generate_response(identified_intent_name, response_rules, num_response_rules);
+            chatbot_response = generate_response(identified_intent_name, response_rules, num_response_rules); 
         }
         else { // 응답 규칙 파일 로드에 실패했거나, 네가 아직 구현하지 않았다면 기본 응답
             char temp_response[256];
@@ -154,12 +168,15 @@ int main() {
         printf(">> 챗봇: %s\n", chatbot_response != NULL ? chatbot_response : "I'm having trouble responding right now.");
 
         // 루프 내에서 할당된 메모리 해제
-        free_char_ptr(preprocessed_text);
-        free_tokens_array(tokens, num_tokens);
-        free_tokens_array(filtered_tokens, num_filtered_tokens);
-        free_char_ptr(identified_intent_name);
-        free_char_ptr(chatbot_response);
-
+        //free_char_ptr(preprocessed_text);
+        //free_tokens_array(tokens, num_tokens);
+        //free_tokens_array(filtered_tokens, num_filtered_tokens);
+        //free_char_ptr(identified_intent_name);
+        //free_char_ptr(chatbot_response);
+        if (strcmp(identified_intent_name, "exit") == 0)
+        {
+            goto cleanup;
+        }
         // 포인터 초기화 및 카운트 초기화 (다음 루프를 위해)
         preprocessed_text = NULL; tokens = NULL; filtered_tokens = NULL; identified_intent_name = NULL; chatbot_response = NULL;
         num_tokens = 0; num_filtered_tokens = 0;
@@ -168,9 +185,8 @@ int main() {
 cleanup: // 프로그램 전체 종료 시 할당된 모든 메모리 해제
     printf("\n--- 챗봇 테스트 종료 --- (모든 동적 할당 메모리 해제 시작)\n");
     free_stopwords_array(stopwords, num_stopwords);
-    free_intent_rules(intents, num_intents);
-    // Placeholder - 네가 free_response_rules 함수를 구현하고 나면 이 주석을 풀고 사용해.
-    // free_response_rules(response_rules, num_response_rules);
+    //free_intent_rules(intents, num_intents);
+    free_response_rules(response_rules, num_response_rules);
     printf("--- 모든 동적 할당 메모리 해제 완료 ---\n");
 
     return 0;

@@ -1,5 +1,10 @@
-weather:weather,forecast,temperature,today,tomorrow,how,cold,hot
-greeting:hello,hi,howareyou,morning,evening,good
-time:time,whattime,when,oclock,now
-joke:joke,funny,tellme,hahaha
-exit:exit,quit,bye,stop,end
+greeting:hello:hi:hey:goodmorning:goodafternoon:goodevening:how:are:you:doing:whatsup:greetings:yo
+weather:weather:forecast:temperature:hot:cold:sunny:rainy:snowy:climate:outlook:outside:conditions:degrees
+time:time:what:current:when:is:it:now:clock
+joke:joke:tell:me:funny:makelaugh:humor:prank:riddle
+exit:bye:goodbye:see:quit:shutdown:terminate:end:finish:stop:done
+name:what:is:your:name:call:who:are:identity:yours
+creator:who:made:you:creator:developer:developed:created:designed:programmed
+ability:what:can:you:do:capabilities:functions:help:perform:task
+thanks:thank:you:thanks:appreciate:it:nice:grateful:gratitude
+feedback:feedback:comment:suggestion:improvement:report:issue:bug:idea:opinion:review

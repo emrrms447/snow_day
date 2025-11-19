@@ -9,5 +9,6 @@ typedef struct {
 
 ResponseRule* load_response_rules(const char* filename, int* num_rules);
 char* generate_response(const char* intent_name, ResponseRule* Rules,int num_response_rules);
+void free_response_rules(ResponseRule* rules, int num_rules);
 
 #endif

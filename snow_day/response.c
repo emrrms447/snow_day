@@ -62,7 +62,7 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 		answer[i].num_responses = 0;
 
 		char* name = strtok(copy_txt, ":"); // : 기준으로 문자열 나누기
-		printf("name= %s\n", name);
+		//printf("name= %s\n", name);
 		answer[i].intent_name = _strdup(name);
 		if (answer[i].intent_name == NULL)
 		{
@@ -81,11 +81,11 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 			return NULL;
 		}
 
-		char* keyword_token = strtok(NULL, "0");
+		char* keyword_token = strtok(NULL, ":");
 		while (keyword_token != NULL)
 		{
 			answer[i].responses[answer[i].num_responses] = _strdup(keyword_token);
-			printf("responses = %s\n", answer[i].responses[answer[i].num_responses]);
+			//printf("responses = %s\n", answer[i].responses[answer[i].num_responses]);
 			if (answer[i].responses[answer[i].num_responses] == NULL)
 			{
 				free(copy_txt);
@@ -94,7 +94,7 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 				return NULL;
 			}
 			answer[i].num_responses++;
-			keyword_token = strtok(NULL, "0");
+			keyword_token = strtok(NULL, ":");
 		}
 
 		char** temp_keywords = (char**)realloc(answer[i].responses, sizeof(char*) * answer[i].num_responses);
@@ -113,7 +113,6 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 
 char* generate_response(const char* intent_name,ResponseRule* Rules,int num_response_rules)
 {
-	//srand((unsigned int)(time(NULL)));
 	ResponseRule* p = Rules;
 	int num,count=0;
 
@@ -132,14 +131,39 @@ char* generate_response(const char* intent_name,ResponseRule* Rules,int num_resp
 	{
 		return NULL;
 	}
-	printf("%s\n%d\n", p->intent_name,p->num_responses);
-	for (int i = 0; i < p->num_responses; i++)
-	{
-		printf("%s\n", p->responses[i]);
-	}
 
 	num = rand() % p->num_responses;
 	char* answer = _strdup(p->responses[num]);
 
 	return p->responses[num];
+}
+
+void free_response_rules(ResponseRule* rules, int num_rules) 
+{
+	for (int i = 0; i < num_rules; i++) 
+	{
+		if (rules[i].intent_name != NULL) 
+		{
+			free(rules[i].intent_name);
+			rules[i].intent_name = NULL; 
+		}
+
+		if (rules[i].responses != NULL) 
+		{
+			for (int j = 0; j < rules[i].num_responses; j++) 
+			{
+				if (rules[i].responses[j] != NULL) 
+				{
+					free(rules[i].responses[j]);
+					rules[i].responses[j] = NULL; 
+				}
+			}
+
+			free(rules[i].responses);
+			rules[i].responses = NULL;
+		}
+	}
+
+	free(rules);
+	rules = NULL; 
 }
