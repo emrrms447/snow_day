@@ -234,7 +234,6 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 		scanf("%s", name);
 		if (strcmp(name,"exit")==0)
 		{
-			printf("오류..1\n");
 			break;
 		}
 		for (int i = 0; i < num_intent; i++)
@@ -256,15 +255,12 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 		while (1)
 		{
 			printf("의도 파악을 위한 키워드를 영어로 입력해주세요. (종료를 원할 경우 exit를 입력해주세요.) : ");
+			scanf("%s", intent);
 			if (strcmp(intent,"exit")==0)
 			{
-				printf("오류..1\n");
 				break;
 			}
-			else
-			{
-				fprintf(fp_intent, "%c", ':');
-			}
+			fprintf(fp_intent, "%c", ':');
 			fprintf(fp_intent, "%s", intent);
 		}
 		fprintf(fp_intent, "%c", '\n');
@@ -273,8 +269,8 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 		{
 			fprintf(fp_response, "%s", name);
 			printf("의도에 대한 답변을 제작해주세요. (종료를 원할 경우 exit를 입력해주세요) : ");
-			scanf("%s", intent);
-			if (fgets(response, sizeof(response), stdin) == NULL) {
+			if (fgets(response, sizeof(response), stdin) == NULL) 
+			{
 				break;
 			}
 			else if(strcmp(response, "exit") == 0)

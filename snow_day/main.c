@@ -86,7 +86,7 @@ int main() {
         {
             printf("챗봇: 설정모드로 진입합니다. \n");
             save_intent_response("intent_rules.txt", "response_rules.txt", &num_intents, intents);
-            continue;
+            goto cleanup;
         }
 
         // --- 각 단계별 처리 ---
