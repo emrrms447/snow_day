@@ -4,12 +4,13 @@
 #include <string.h>
 #include "preprocessing.h"
 #include "brain.h"
+#include "response.h"
 /*
 
 //_____brain.c_____//
 시작일시:20251017
 
-최종수정:20251106
+최종수정:20251125
 
 목표 : 챗봇의 가장 중요한 뇌 부분을 담당할 c파일
 
@@ -194,6 +195,7 @@ char* identify_intent(char** filtered_tokens, int num_filtered_tokens, Intent* i
 // Intent 구조체 배열과 그 내부의 모든 할당된 메모리를 해제하는 헬퍼 함수
 void free_intent_rules(Intent* intents, int num_intents)
 {
+	printf("--- 규칙 동적 할당 메모리 해제 시작 ---\n");
 	Intent* p;
 	for (p = intents; p < intents + num_intents; p++)
 	{
@@ -212,5 +214,83 @@ void free_intent_rules(Intent* intents, int num_intents)
 		}
 	}
 	free(intents);
+	printf("--- 규칙 동적 할당 메모리 해제 완료 ---\n");
+
 	intents = NULL;
+}
+
+void save_intent_response(char* intent_file_name, char* response_file_name, int num_intent, Intent* intents)
+{
+	FILE* fp_intent = fopen(intent_file_name, "a"),*fp_response=fopen(response_file_name,"a");
+	if (fp_intent == NULL||fp_response==NULL)
+	{
+		return;
+	}
+	char name[256],intent[256],response[256];
+	int count = 0;
+	while (1)
+	{
+		printf("새로운 규칙의 이름을 영어로 입력해주세요. (원하지 않을 경우 exit를 입력해주세요.) : ");
+		scanf("%s", name);
+		if (strcmp(name,"exit")==0)
+		{
+			printf("오류..1\n");
+			break;
+		}
+		for (int i = 0; i < num_intent; i++)
+		{
+			if (strcmp(name, intents[i].name) == 0)
+			{
+				printf("존재하는 규칙의 이름입니다. 새로운 이름으로 만들어주세요.\n");
+				count = 1;
+				break;
+			}
+		}
+		if (count == 1)
+		{
+			count = 0;
+			continue;
+		}
+		fprintf(fp_intent, "%s", name);
+
+		while (1)
+		{
+			printf("의도 파악을 위한 키워드를 영어로 입력해주세요. (종료를 원할 경우 exit를 입력해주세요.) : ");
+			if (strcmp(intent,"exit")==0)
+			{
+				printf("오류..1\n");
+				break;
+			}
+			else
+			{
+				fprintf(fp_intent, "%c", ':');
+			}
+			fprintf(fp_intent, "%s", intent);
+		}
+		fprintf(fp_intent, "%c", '\n');
+
+		while (1)
+		{
+			fprintf(fp_response, "%s", name);
+			printf("의도에 대한 답변을 제작해주세요. (종료를 원할 경우 exit를 입력해주세요) : ");
+			scanf("%s", intent);
+			if (fgets(response, sizeof(response), stdin) == NULL) {
+				break;
+			}
+			else if(strcmp(response, "exit") == 0)
+			{
+				break;
+			}
+			else
+			{
+				response[strcspn(response, "\n")] = '\0';
+				fprintf(fp_response, "%c", ':');
+			}
+			fprintf(fp_response, "\"%s\"", response);
+		}
+		fprintf(fp_response, "%c", '\n');
+	}
+	printf("원활한 진행을 위해서 프로그램을 종료 후 다시 실행해주세요.");
+	fclose(fp_intent);
+	fclose(fp_response);
 }

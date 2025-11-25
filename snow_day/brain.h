@@ -10,5 +10,6 @@ typedef struct {
 Intent* load_intent_rules(const char* filename, int* num_intents);
 char* identify_intent(char** filtered_tokens, int num_filtered_tokens, Intent* intents, int num_intents);
 void free_intent_rules(Intent* intents, int num_intents);
+void save_intent_response(char* intent_file_name, char* response_file_name, int num_intent, Intent* intents);
 
 #endif

@@ -220,11 +220,14 @@ void free_tokens_array(char** tokens, int num_tokens)
 
 void free_stopwords_array(char** stopwords, int num_stopwords)
 {
+    printf("--- 불용어 동적 할당 메모리 해제 시작 ---\n");
     for (int i = 0; i < num_stopwords; i++)
     {
         free(*(stopwords + i));
         *(stopwords + i) = NULL;
     }
     free(stopwords);
+    printf("--- 불용어 동적 할당 메모리 해제 완료 ---\n");
+
     stopwords = NULL;
 }

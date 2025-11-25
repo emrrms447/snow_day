@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h> 
+#include <time.h>
 #include "preprocessing.h"
 #include "brain.h"
 #include "response.h"
@@ -72,13 +73,20 @@ int main() {
         printf(">> 당신: ");
         if (fgets(user_input_buffer, sizeof(user_input_buffer), stdin) == NULL) {
             fprintf(stderr, "Error: 사용자 입력 실패.\n");
-            break;
+            goto cleanup;
         }
         user_input_buffer[strcspn(user_input_buffer, "\n")] = 0; // 개행 문자 제거
 
         if (strcmp(user_input_buffer, "exit") == 0) {
             printf("챗봇: 프로그램이 종료됩니다. 안녕!\n");
-            break;
+            goto cleanup;
+        }
+
+        if (strcmp(user_input_buffer, "setting") == 0)
+        {
+            printf("챗봇: 설정모드로 진입합니다. \n");
+            save_intent_response("intent_rules.txt", "response_rules.txt", &num_intents, intents);
+            continue;
         }
 
         // --- 각 단계별 처리 ---
@@ -89,9 +97,10 @@ int main() {
         if (preprocessed_text == NULL || strlen(preprocessed_text) == 0) {
             fprintf(stderr, "Warning: 전처리된 텍스트가 없거나 비어 있습니다.\n");
             chatbot_response = _strdup("I'm sorry, I couldn't process your input.");
-            goto respond_and_cleanup_loop;
+            continue;
+            //goto respond_and_cleanup_loop;
         }
-        // printf("[Debug] 전처리 후: \"%s\"\n", preprocessed_text);
+        printf("[Debug] 전처리 후: \"%s\"\n", preprocessed_text);
 
         // 2. 토큰화 (tokenize_sentence)
         tokens = tokenize_sentence(preprocessed_text, &num_tokens);
@@ -101,8 +110,8 @@ int main() {
             continue;
             //goto respond_and_cleanup_loop;
         }
-        // printf("[Debug] 토큰화된 단어 개수: %d, 목록: ", num_tokens);
-        // for (int i = 0; i < num_tokens; i++) printf("'%s' ", tokens[i]); printf("\n");
+        printf("[Debug] 토큰화된 단어 개수: %d, 목록: ", num_tokens);
+        for (int i = 0; i < num_tokens; i++) printf("'%s' ", tokens[i]); printf("\n");
 
         // 3. 불용어 제거 (remove_stopwords)
         filtered_tokens = remove_stopwords(tokens, num_tokens, stopwords, num_stopwords, &num_filtered_tokens);
@@ -112,8 +121,8 @@ int main() {
             continue;
             //goto respond_and_cleanup_loop;
         }
-        // printf("[Debug] 필터링된 단어 개수: %d, 목록: ", num_filtered_tokens);
-        // for (int i = 0; i < num_filtered_tokens; i++) printf("'%s' ", filtered_tokens[i]); printf("\n");
+        printf("[Debug] 필터링된 단어 개수: %d, 목록: ", num_filtered_tokens);
+        for (int i = 0; i < num_filtered_tokens; i++) printf("'%s' ", filtered_tokens[i]); printf("\n");
 
         // 4. 의도 파악 (identify_intent)
         identified_intent_name = identify_intent(filtered_tokens, num_filtered_tokens, intents, num_intents);
@@ -155,7 +164,7 @@ int main() {
         // 이 부분은 identified_intent_name 과 response_rules, num_response_rules를 활용해야 함.
         // 만약 response_rules를 로드하지 않았다면 기본 응답을 하도록.
         if (response_rules != NULL) {
-            chatbot_response = generate_response(identified_intent_name, response_rules, num_response_rules); 
+            chatbot_response = generate_response(identified_intent_name, response_rules, num_response_rules);
         }
         else { // 응답 규칙 파일 로드에 실패했거나, 네가 아직 구현하지 않았다면 기본 응답
             char temp_response[256];
@@ -185,9 +194,9 @@ int main() {
 cleanup: // 프로그램 전체 종료 시 할당된 모든 메모리 해제
     printf("\n--- 챗봇 테스트 종료 --- (모든 동적 할당 메모리 해제 시작)\n");
     free_stopwords_array(stopwords, num_stopwords);
-    //free_intent_rules(intents, num_intents);
-    free_response_rules(response_rules, num_response_rules);
+    free_intent_rules(intents, num_intents);
+    //free_response_rules(response_rules, num_response_rules);
     printf("--- 모든 동적 할당 메모리 해제 완료 ---\n");
 
     return 0;
-}
+}   

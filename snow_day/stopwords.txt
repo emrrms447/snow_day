@@ -70,9 +70,6 @@ no
 yes
 ok
 okay
-hello
-hi
-hey
 chatbot
 ai
 good

@@ -55,7 +55,7 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 		char* copy_txt = _strdup(buf);
 		if (copy_txt == NULL)
 		{
-			free_intent_rules(answer, i);
+			free_response_rules(answer, i);
 			fclose(fp);
 			return NULL;
 		}
@@ -67,7 +67,7 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 		if (answer[i].intent_name == NULL)
 		{
 			free(copy_txt);
-			free_intent_rules(answer, i);
+			free_response_rules(answer, i);
 			fclose(fp);
 			return NULL;
 		}
@@ -76,7 +76,7 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 		if (answer[i].responses == NULL)
 		{
 			free(copy_txt);
-			free_intent_rules(answer, i);
+			free_response_rules(answer, i);
 			fclose(fp);
 			return NULL;
 		}
@@ -89,7 +89,7 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 			if (answer[i].responses[answer[i].num_responses] == NULL)
 			{
 				free(copy_txt);
-				free_intent_rules(answer, i);
+				free_response_rules(answer, i);
 				fclose(fp);
 				return NULL;
 			}
@@ -110,11 +110,11 @@ ResponseRule* load_response_rules(const char* filename, int* num_rules)
 	return answer;
 }
 
-
 char* generate_response(const char* intent_name,ResponseRule* Rules,int num_response_rules)
 {
 	ResponseRule* p = Rules;
 	int num,count=0;
+	static tmp;
 
 	while (p<Rules+num_response_rules)
 	{
@@ -133,13 +133,20 @@ char* generate_response(const char* intent_name,ResponseRule* Rules,int num_resp
 	}
 
 	num = rand() % p->num_responses;
+	while (tmp == num)
+	{
+		num = rand() % p->num_responses;
+	}
+	tmp = num;
+
 	char* answer = _strdup(p->responses[num]);
 
-	return p->responses[num];
+	return answer;
 }
 
 void free_response_rules(ResponseRule* rules, int num_rules) 
 {
+	printf("--- 답변 동적 할당 메모리 해제 시작 ---\n");
 	for (int i = 0; i < num_rules; i++) 
 	{
 		if (rules[i].intent_name != NULL) 
@@ -165,5 +172,7 @@ void free_response_rules(ResponseRule* rules, int num_rules)
 	}
 
 	free(rules);
+	printf("--- 답변 동적 할당 메모리 해제 완료 ---\n");
+
 	rules = NULL; 
 }
