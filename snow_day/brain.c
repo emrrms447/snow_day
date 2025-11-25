@@ -238,7 +238,7 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 		}
 		for (int i = 0; i < num_intent; i++)
 		{
-			if (strcmp(name, intents[i].name) == 0)
+			if (intents[i].name!=NULL&&strcmp(name, intents[i].name) == 0)
 			{
 				printf("존재하는 규칙의 이름입니다. 새로운 이름으로 만들어주세요.\n");
 				count = 1;
@@ -265,21 +265,21 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 		}
 		fprintf(fp_intent, "%c", '\n');
 
+		fprintf(fp_response, "%s", name);
 		while (1)
 		{
-			fprintf(fp_response, "%s", name);
 			printf("의도에 대한 답변을 제작해주세요. (종료를 원할 경우 exit를 입력해주세요) : ");
 			if (fgets(response, sizeof(response), stdin) == NULL) 
 			{
 				break;
 			}
-			else if(strcmp(response, "exit") == 0)
-			{
-				break;
-			}
-			else
+			if (fgets(response, sizeof(response), stdin) != NULL)
 			{
 				response[strcspn(response, "\n")] = '\0';
+				if (strcmp(response, "exit") == 0)
+				{
+					break;
+				}
 				fprintf(fp_response, "%c", ':');
 			}
 			fprintf(fp_response, "\"%s\"", response);

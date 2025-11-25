@@ -85,7 +85,7 @@ int main() {
         if (strcmp(user_input_buffer, "setting") == 0)
         {
             printf("챗봇: 설정모드로 진입합니다. \n");
-            save_intent_response("intent_rules.txt", "response_rules.txt", &num_intents, intents);
+            save_intent_response("intent_rules.txt", "response_rules.txt", num_intents, intents);
             goto cleanup;
         }
 
