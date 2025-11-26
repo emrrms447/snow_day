@@ -8,4 +8,3 @@ creator:who:made:you:creator:developer:developed:created:designed:programmed
 ability:what:can:you:do:capabilities:functions:help:perform:task
 thanks:thank:you:thanks:appreciate:it:nice:grateful:gratitude
 feedback:feedback:comment:suggestion:improvement:report:issue:bug:idea:opinion:review
-

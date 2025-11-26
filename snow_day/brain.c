@@ -231,8 +231,12 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 	while (1)
 	{
 		printf("새로운 규칙의 이름을 영어로 입력해주세요. (원하지 않을 경우 exit를 입력해주세요.) : ");
-		scanf("%s", name);
-		if (strcmp(name,"exit")==0)
+		if (fgets(name, sizeof(name), stdin)==NULL)
+		{
+			break;
+		}
+		name[strcspn(name, "\n")] = '\0';
+		if (strcmp(name, "exit") == 0)
 		{
 			break;
 		}
@@ -255,8 +259,12 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 		while (1)
 		{
 			printf("의도 파악을 위한 키워드를 영어로 입력해주세요. (종료를 원할 경우 exit를 입력해주세요.) : ");
-			scanf("%s", intent);
-			if (strcmp(intent,"exit")==0)
+			if (fgets(intent, sizeof(intent), stdin) == NULL)
+			{
+				break;
+			}
+			intent[strcspn(intent, "\n")] = '\0';
+			if (strcmp(intent, "exit") == 0)
 			{
 				break;
 			}
@@ -273,15 +281,14 @@ void save_intent_response(char* intent_file_name, char* response_file_name, int 
 			{
 				break;
 			}
-			if (fgets(response, sizeof(response), stdin) != NULL)
+
+			response[strcspn(response, "\n")] = '\0';
+			if (strcmp(response, "exit") == 0)
 			{
-				response[strcspn(response, "\n")] = '\0';
-				if (strcmp(response, "exit") == 0)
-				{
-					break;
-				}
-				fprintf(fp_response, "%c", ':');
+				break;
 			}
+			fprintf(fp_response, "%c", ':');
+			
 			fprintf(fp_response, "\"%s\"", response);
 		}
 		fprintf(fp_response, "%c", '\n');

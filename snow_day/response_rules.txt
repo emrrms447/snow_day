@@ -9,4 +9,3 @@ creator:"I am an AI assistant created by Yu-Ryeong.":"Yu-Ryeong is my talented d
 ability:"I can help you with simple questions, identify your intent, and provide predefined responses.":"I can chat with you, tell jokes, and answer basic queries based on my rules!":"My main goal is to understand your needs and respond helpfully."
 thanks:"You're welcome!":"No problem at all!":"My pleasure!":"Glad I could help."
 feedback:"Thank you for your feedback! I'm always looking to improve.":"Your input is valuable! Please tell me your suggestions.":"I appreciate you taking the time to share your thoughts."
-

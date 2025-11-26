@@ -69,7 +69,7 @@ int main() {
 
     // --- 사용자 입력 루프 ---
     while (1) {
-        printf("\n\n--- 챗봇 대화 시작 (종료: 'exit') ----\n");
+        printf("\n\n--- 챗봇 대화 시작 (종료: 'exit' , 설정 : 'setting' ) ----\n");
         printf(">> 당신: ");
         if (fgets(user_input_buffer, sizeof(user_input_buffer), stdin) == NULL) {
             fprintf(stderr, "Error: 사용자 입력 실패.\n");
